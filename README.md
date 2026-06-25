@@ -15,9 +15,10 @@ This may not work with other models. I will look into reverse engineering other 
 ## Run as a daemon (macOS)
 
 To keep the clock in sync automatically, install `ajazz` as a `launchd`
-**LaunchAgent**. It will run the moment the keyboard is attached and again on a
-fixed interval while it stays connected. When the keyboard is unplugged, the
-periodic runs simply find no device and exit.
+**LaunchAgent**. It runs at login and then on a fixed interval (default every 5
+minutes). When the keyboard is unplugged, the periodic runs simply find no
+device and exit cheaply, so a freshly-connected keyboard is synced within one
+interval.
 
 ```bash
 ./dist/install.sh
@@ -51,10 +52,12 @@ To remove it:
 - **Input Monitoring permission:** macOS may require granting the binary access
   under System Settings → Privacy & Security → Input Monitoring before it can
   talk to the HID device. If syncs fail silently, check `ajazz.err.log` first.
-- **USB-attach trigger:** the plist matches the modern `IOUSBHostDevice`
-  provider class. If the on-connect trigger doesn't fire on your macOS version,
-  the periodic `StartInterval` still keeps things in sync; you can also try the
-  older `IOUSBDevice` provider class.
+- **Instant on-connect:** this agent intentionally does *not* use an IOKit
+  `device-attach` launch event. A one-shot tool can't consume the launchd XPC
+  event stream, so launchd would relaunch it every few seconds while the device
+  stayed attached. The `StartInterval` covers connect detection instead. True
+  instant-on-attach would require turning the binary into a resident agent that
+  handles the `com.apple.iokit.matching` XPC stream.
 
 ## Project layout
 
