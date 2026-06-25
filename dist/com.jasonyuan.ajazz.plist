@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jasonyuan.ajazz</string>
+
+    <!-- Absolute path to the installed binary. The installer rewrites this. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>__BIN__</string>
+    </array>
+
+    <!-- Run periodically while the keyboard is connected (seconds). -->
+    <!-- When disconnected the program just finds no device and exits. -->
+    <key>StartInterval</key>
+    <integer>3600</integer>
+
+    <!-- Run once at load/login too, so it syncs right away. -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Fire the instant the AK650 USB device is attached. -->
+    <!-- idVendor 0x05ac = 1452, idProduct 0x024f = 591 -->
+    <key>LaunchEvents</key>
+    <dict>
+        <key>com.apple.iokit.matching</key>
+        <dict>
+            <key>com.apple.device-attach</key>
+            <dict>
+                <key>idVendor</key>
+                <integer>1452</integer>
+                <key>idProduct</key>
+                <integer>591</integer>
+                <key>IOProviderClass</key>
+                <string>IOUSBHostDevice</string>
+                <key>IOMatchLaunchStream</key>
+                <true/>
+            </dict>
+        </dict>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>__LOG__/ajazz.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>__LOG__/ajazz.err.log</string>
+</dict>
+</plist>
