@@ -85,6 +85,7 @@ fn send_time_payload(device: &HidDevice) -> anyhow::Result<()> {
 
     let mut read_buf = vec![0_u8; 65];
     let mut write_buf = vec![0_u8; 65];
+    println!("Sending initialization packets");
 
     // init packet 1
     write_buf[1] = 0x04;
@@ -101,16 +102,9 @@ fn send_time_payload(device: &HidDevice) -> anyhow::Result<()> {
     device.get_feature_report(&mut read_buf)?;
 
     // time sync packet
-    // let payload = TimePayload {
-    //     year: 0,
-    //     month: 0,
-    //     day: 0,
-    //     hour: 0,
-    //     minute: 0,
-    //     second: 0,
-    //     day_of_week: 0,
-    // };
     TimePayload::from_current_time()?.generate_payload(&mut write_buf);
+
+    println!("Sending time sync packet");
     device.send_feature_report(&write_buf)?;
     device.get_feature_report(&mut read_buf)?;
 
@@ -118,6 +112,7 @@ fn send_time_payload(device: &HidDevice) -> anyhow::Result<()> {
     write_buf.fill(0);
     write_buf[1] = 0x04;
     write_buf[2] = 0x02;
+    println!("Sending cleanup packet");
     device.send_feature_report(&write_buf)?;
     device.get_feature_report(&mut read_buf)?;
 
